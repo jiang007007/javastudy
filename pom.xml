@@ -24,15 +24,15 @@
     </properties>
 
     <dependencyManagement>
-        <dependencies>
-            <!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-all</artifactId>
-                <version>4.1.39.Final</version>
-            </dependency>
-            
-        </dependencies>
+<!--        <dependencies>-->
+<!--            &lt;!&ndash; https://mvnrepository.com/artifact/io.netty/netty-all &ndash;&gt;-->
+<!--            <dependency>-->
+<!--                <groupId>io.netty</groupId>-->
+<!--                <artifactId>netty-all</artifactId>-->
+<!--                <version>4.1.39.Final</version>-->
+<!--            </dependency>-->
+<!--            -->
+<!--        </dependencies>-->
     </dependencyManagement>
     <build>
         <plugins>
