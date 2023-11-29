@@ -170,4 +170,7 @@ public abstract class AbstractEndpoint<S> {
             return threadName;
         }
     }
+
+    //钩子方法具体子类创建Acceptor的行为
+    public abstract Acceptor createAcceptor();
 }

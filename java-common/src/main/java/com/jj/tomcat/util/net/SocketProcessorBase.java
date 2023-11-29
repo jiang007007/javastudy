@@ -1,5 +1,7 @@
 package com.jj.tomcat.util.net;
 
+import com.jj.tomcat.util.net.channel.SocketWrapperBase;
+
 import java.util.Objects;
 
 /**

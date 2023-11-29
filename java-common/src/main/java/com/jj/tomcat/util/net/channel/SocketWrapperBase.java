@@ -1,8 +1,10 @@
-package com.jj.tomcat.util.net;
+package com.jj.tomcat.util.net.channel;
+
+import com.jj.tomcat.util.net.AbstractEndpoint;
 
 public abstract class SocketWrapperBase<E> {
 
-    private final E socket;//NioSocketWrapper
+    private final E socket;//NioChannel(对ServerSocket的包装)
 
     private final AbstractEndpoint<E> endpoint;
 
