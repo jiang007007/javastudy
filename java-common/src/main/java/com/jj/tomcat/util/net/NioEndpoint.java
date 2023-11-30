@@ -1,12 +1,13 @@
 package com.jj.tomcat.util.net;
 
+import com.jj.tomcat.util.collections.SynchronizedQueue;
 import com.jj.tomcat.util.collections.SynchronizedStack;
 import com.jj.tomcat.util.net.channel.NioChannel;
+import com.jj.tomcat.util.net.channel.SocketWrapperBase;
 
 import java.io.IOException;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class NioEndpoint extends AbstractEndpoint<NioChannel> {
 
@@ -20,6 +21,88 @@ public class NioEndpoint extends AbstractEndpoint<NioChannel> {
      */
     private volatile ServerSocketChannel serverSock = null;
 
+    /**
+     * 1.把channel注册到select中
+     * 2. 重置注册事件
+     */
+    public static class PollerEvent implements Runnable {
+        private NioChannel socket;
+        private NioSocketWrapper socketWrapper;
+        private int interestOps;
+
+        public PollerEvent(NioChannel socket, NioSocketWrapper socketWrapper, int interestOps) {
+            reset(socket, socketWrapper, interestOps);
+        }
+
+        public void reset(NioChannel socket, NioSocketWrapper socketWrapper, int interestOps) {
+            this.socket = socket;
+            this.socketWrapper = socketWrapper;
+            this.interestOps = interestOps;
+        }
+
+        //重置: NioChannel,NioSocketWrapper 置null,事件为0
+        public void reset() {
+            reset(null, null, 0);
+        }
+
+        @Override
+        public void run() {
+            //初始化状态 则对selector 注册为读事件
+            if (this.interestOps == OP_REGISTER) {
+                //att 注册回调函数(对象)
+                try {
+                    socket.getIOChannel().register(socket.getPoller().selector, SelectionKey.OP_READ, socketWrapper);
+                } catch (ClosedChannelException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                //获取SelectKey
+                SelectionKey selectionKey = socket.getIOChannel().keyFor(socket.getPoller().selector);
+                try {
+                    if (selectionKey == null) {
+                        //未找到selector对应的key 设置NioSocketWrapper不可用
+                        ((NioSocketWrapper) socket.getSocketWrapper()).closed = true;
+                    } else {
+                        NioSocketWrapper socketWrapper = (NioSocketWrapper) selectionKey.attachment();
+                        if (socketWrapper != null) {
+                            int ops = selectionKey.interestOps() | interestOps;//二进制组合  有1则1
+                            socketWrapper.interestOps(ops);
+                            selectionKey.interestOps(ops);//对应channel更新注册事件
+                        }
+                    }
+                } catch (CancelledKeyException ckx) {
+
+                }
+            }
+        }
+    }
+
+
+    //对NioEndPoint 和NioChannel封装
+    public static class NioSocketWrapper extends SocketWrapperBase<NioChannel> {
+
+        private int interestOps = 0;
+        private volatile boolean closed = false;
+
+        public NioSocketWrapper(NioChannel socket, AbstractEndpoint<NioChannel> endpoint) {
+            super(socket, endpoint);
+            socketBufferHandler = socket.getBufHandler();
+        }
+
+        public int interestOps() {
+            return interestOps;
+        }
+
+        public int interestOps(int ops) {
+            this.interestOps = ops;
+            return ops;
+        }
+
+        @Override
+        public boolean isClosed() {
+            return closed;
+        }
+    }
 
     @Override
     public AbstractEndpoint.Acceptor createAcceptor() {
@@ -67,6 +150,43 @@ public class NioEndpoint extends AbstractEndpoint<NioChannel> {
         }
     }
 
+    public class Poller implements Runnable {
+        private Selector selector;
+        //缓冲队列 缓冲Acceptor提交的PollerEvent
+        private final SynchronizedQueue<PollerEvent> events = new SynchronizedQueue<>();
+
+        private volatile boolean close = false;
+
+        private AtomicLong wakeupCounter = new AtomicLong(0);
+
+        //selector准备好的事件数
+        private volatile int keyCount = 0;
+
+        public Poller() throws IOException {
+            selector = Selector.open();//打开多路复用器
+        }
+
+        public int getKeyCount() {
+            return keyCount;
+        }
+
+        public Selector getSelector() {
+            return selector;
+        }
+
+        @Override
+        public void run() {
+
+        }
+
+        //提供添加事件到队列中
+        private void addEvent(PollerEvent event) {
+            events.offer(event);//头添加  尾部取
+            if (wakeupCounter.incrementAndGet() == 0){
+                selector.wakeup();
+            }
+        }
+    }
 
     private void close(NioChannel socket, SelectionKey key) {
         nioChannels.push(socket);
