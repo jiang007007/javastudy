@@ -32,4 +32,10 @@ public class SocketBufferHandler {
         }
     }
 
+    public void reset() {
+        readBuffer.clear();
+        readBufferConfiguredForWrite = true;
+        writeBuffer.clear();
+        writeBufferConfiguredForWrite = true;
+    }
 }

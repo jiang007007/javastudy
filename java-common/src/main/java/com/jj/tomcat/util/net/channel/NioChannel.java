@@ -18,7 +18,7 @@ public class NioChannel implements ByteChannel, ScatteringByteChannel, Gathering
 
     protected final SocketBufferHandler bufferHandler;
 
-    protected  NioEndpoint.Poller poller;
+    protected NioEndpoint.Poller poller;
 
 
     public NioChannel(SocketChannel channel, SocketBufferHandler bufferHandler) {
@@ -29,15 +29,20 @@ public class NioChannel implements ByteChannel, ScatteringByteChannel, Gathering
     public SocketChannel getIOChannel() {
         return sc;
     }
+
+    public void setIOChannel(SocketChannel sc) {
+        this.sc = sc;
+    }
+
     public void setPoller(NioEndpoint.Poller poller) {
         this.poller = poller;
     }
 
     public NioEndpoint.Poller getPoller() {
-       return poller;
+        return poller;
     }
 
-    void setSocketWrapper(SocketWrapperBase<NioChannel> socketWrapper) {
+    public void setSocketWrapper(SocketWrapperBase<NioChannel> socketWrapper) {
         this.socketWrapper = socketWrapper;
     }
 
@@ -47,6 +52,10 @@ public class NioChannel implements ByteChannel, ScatteringByteChannel, Gathering
 
     public SocketBufferHandler getBufHandler() {
         return bufferHandler;
+    }
+
+    public int handshake(boolean read, boolean write) throws IOException {
+        return 0;
     }
 
     @Override
@@ -87,5 +96,16 @@ public class NioChannel implements ByteChannel, ScatteringByteChannel, Gathering
     @Override
     public void close() throws IOException {
 
+    }
+
+    /**
+     * Reset the channel
+     */
+    public void reset() {
+        bufferHandler.reset();
+    }
+
+    public boolean isHandshakeComplete() {
+        return true;
     }
 }

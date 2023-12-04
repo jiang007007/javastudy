@@ -29,7 +29,6 @@ public class ByteBufferUtils {
         }
         cleanerMethod = cleanerMethodLocal;
         cleanMethod = cleanMethodLocal;
-
     }
 
     public static void cleanDirectBuffer(ByteBuffer buf){

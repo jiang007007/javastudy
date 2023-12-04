@@ -1,12 +1,14 @@
 package com.jj.tomcat.util.net;
 
 import com.jj.tomcat.util.collections.SynchronizedStack;
+import com.jj.tomcat.util.net.channel.SocketWrapperBase;
 
 import java.core.TaskQueue;
 import java.core.TaskThreadFactory;
 import java.core.TomcatThreadPoolExecutor;
 import java.net.InetAddress;
 import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -69,6 +71,11 @@ public abstract class AbstractEndpoint<S> {
      * false: 在调用start方法绑定口,stop 方法 解绑端口
      */
     private boolean bindOnInit = true;
+
+    /**
+     * Max keep alive requests
+     */
+    private int maxKeepAliveRequests = 100; // as in Apache HTTPD server
 
     private volatile BindState bindState = BindState.UNBOUND;
 
@@ -135,6 +142,15 @@ public abstract class AbstractEndpoint<S> {
         return socketProperties;
     }
 
+    public int getMaxKeepAliveRequests() {
+        return maxKeepAliveRequests;
+    }
+
+    public void setMaxKeepAliveRequests(int maxKeepAliveRequests) {
+        this.maxKeepAliveRequests = maxKeepAliveRequests;
+    }
+
+
     public void createExecutor() {
         internalExecutor = true;
         TaskQueue taskQueue = new TaskQueue();
@@ -149,6 +165,19 @@ public abstract class AbstractEndpoint<S> {
      */
     protected enum BindState {
         UNBOUND, BOUND_ON_INIT, BOUND_ON_START, SOCKET_CLOSED_ON_STOP
+    }
+
+    //对NioChannel的处理接口
+    public interface Handler<S> {
+        enum SocketState {
+            OPEN, CLOSE, LONG, ASYNC_END, SENDFILE, UPGRADING, SUSPENDED
+        }
+        //根据Socket状态处理指定的socket ->socketChannel
+        SocketState process(SocketWrapperBase<S> socket,SocketState states);
+
+        void pause();
+
+        void recycle();
     }
 
     //获取客户端准备好的连接 抽象类 抽取出线程的维护状态,和线程名
@@ -173,4 +202,36 @@ public abstract class AbstractEndpoint<S> {
 
     //钩子方法具体子类创建Acceptor的行为
     public abstract Acceptor createAcceptor();
+
+    protected abstract SocketProcessorBase<S> createSocketProcessor(SocketWrapperBase<S> socketWrapper, SocketEvent event);
+
+
+    //模板算法 统一处理worker线程的连接事件
+    public boolean processSocket(SocketWrapperBase<S> attachment, SocketEvent event, boolean dispatch) {
+        try {
+            if (attachment == null) {
+                return false;
+            }
+            SocketProcessorBase<S> processorBase = processorCache.pop();
+            if (processorBase == null) {
+                processorBase = createSocketProcessor(attachment, event);
+            } else {
+                processorBase.reset(attachment, event);
+            }
+            Executor executor = getExecutor();//获取线程池
+            if (dispatch && executor != null) {
+                executor.execute(processorBase);
+            } else {
+                processorBase.run();
+            }
+        } catch (RejectedExecutionException ree) {
+            //线程池已满
+            return false;
+
+        } catch (Throwable t) {
+            // This means we got an OOM or similar creating a thread, or that
+            // the pool and its queue are full
+        }
+        return true;
+    }
 }
