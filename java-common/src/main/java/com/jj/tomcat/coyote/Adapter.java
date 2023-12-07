@@ -1,4 +1,4 @@
-package com.jj.coyote;
+package com.jj.tomcat.coyote;
 
 public interface Adapter {
 }
