@@ -41,7 +41,7 @@ public abstract class AbstractProcessorLight implements Processor {
      * @return
      * @throws IOException
      */
-    protected abstract SocketState service(SocketWrapperBase<? extends NioChannel> socketWrapper) throws IOException;
+    protected abstract SocketState service(SocketWrapperBase<?> socketWrapper) throws IOException;
 
     protected abstract SocketState dispatch(SocketEvent status) throws IOException;
 }

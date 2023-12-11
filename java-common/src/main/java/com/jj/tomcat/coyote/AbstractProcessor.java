@@ -34,4 +34,12 @@ public abstract class AbstractProcessor extends AbstractProcessorLight implement
         this.response.setHook(this);
 
     }
+
+    public void setAdapter(Adapter adapter) {
+        this.adapter = adapter;
+    }
+
+    public Adapter getAdapter() {
+        return adapter;
+    }
 }

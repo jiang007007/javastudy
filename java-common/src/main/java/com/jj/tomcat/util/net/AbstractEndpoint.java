@@ -173,7 +173,7 @@ public abstract class AbstractEndpoint<S> {
             OPEN, CLOSE, LONG, ASYNC_END, SENDFILE, UPGRADING, SUSPENDED
         }
         //根据Socket状态处理指定的socket ->socketChannel
-        SocketState process(SocketWrapperBase<S> socket,SocketState states);
+        SocketState process(SocketWrapperBase<S> socket,SocketEvent states);
 
         void pause();
 
