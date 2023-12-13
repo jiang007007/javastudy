@@ -170,7 +170,7 @@ public abstract class AbstractEndpoint<S> {
     //对NioChannel的处理接口
     public interface Handler<S> {
         enum SocketState {
-            OPEN, CLOSE, LONG, ASYNC_END, SENDFILE, UPGRADING, SUSPENDED
+            OPEN, CLOSED, LONG, ASYNC_END, SENDFILE, UPGRADING, SUSPENDED
         }
         //根据Socket状态处理指定的socket ->socketChannel
         SocketState process(SocketWrapperBase<S> socket,SocketEvent states);

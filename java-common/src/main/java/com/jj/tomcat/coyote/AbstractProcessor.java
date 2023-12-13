@@ -42,4 +42,12 @@ public abstract class AbstractProcessor extends AbstractProcessorLight implement
     public Adapter getAdapter() {
         return adapter;
     }
+
+    /**
+     *
+     * @param socketWrapper  NioSocketWrapper
+     */
+    protected void setSocketWrapper(SocketWrapperBase<?> socketWrapper) {
+        this.socketWrapper = socketWrapper;
+    }
 }

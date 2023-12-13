@@ -15,6 +15,9 @@ public final class Request {
     //维护持有的请求是否有错误
     Exception errorException = null;
 
+    private final RequestInfo reqProcessorMX = new RequestInfo(this);
+
+    private final Object notes[] = new Object[32];
 
     public void setResponse(Response response) {
         this.response = response;
@@ -23,6 +26,14 @@ public final class Request {
 
     public void setHook(ActionHook hook) {
         this.hook = hook;
+    }
+
+    public RequestInfo getRequestProcessor() {
+        return reqProcessorMX;
+    }
+
+    public final Object getNote(int pos) {
+        return notes[pos];
     }
 
     public void action(ActionCode actionCode, Object param) {

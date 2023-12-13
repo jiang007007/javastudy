@@ -18,6 +18,9 @@ public class CoyoteAdapter implements Adapter {
 
     @Override
     public void service(Request req, Response res) throws Exception {
+        Request request = (Request) req.getNote(1);
+        Response response = (Response) res.getNode(1);
+
 
     }
 }

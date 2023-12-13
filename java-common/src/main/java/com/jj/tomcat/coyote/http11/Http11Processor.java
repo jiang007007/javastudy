@@ -2,6 +2,7 @@ package com.jj.tomcat.coyote.http11;
 
 import com.jj.tomcat.coyote.AbstractProcessor;
 import com.jj.tomcat.coyote.ActionCode;
+import com.jj.tomcat.coyote.body.RequestInfo;
 import com.jj.tomcat.util.net.AbstractEndpoint;
 import com.jj.tomcat.util.net.AbstractEndpoint.Handler.SocketState;
 import com.jj.tomcat.util.net.SocketEvent;
@@ -22,6 +23,10 @@ public class Http11Processor extends AbstractProcessor {
 
     @Override
     protected SocketState service(SocketWrapperBase<?> socketWrapper) throws IOException {
+        RequestInfo rp = request.getRequestProcessor();
+
+        //
+        setSocketWrapper(socketWrapper);
         return null;
     }
 
@@ -34,4 +39,10 @@ public class Http11Processor extends AbstractProcessor {
     public void action(ActionCode actionCode, Object param) {
 
     }
+
+    @Override
+    protected final void setSocketWrapper(SocketWrapperBase<?> socketWrapper) {
+        super.setSocketWrapper(socketWrapper);
+    }
+
 }

@@ -4,7 +4,7 @@ import com.jj.tomcat.coyote.ActionHook;
 
 public final class Response {
     Request req;
-
+    final Object notes[] = new Object[32];
     volatile ActionHook hook;
 
     public Request getRequest() {
@@ -17,5 +17,9 @@ public final class Response {
 
     public void setHook(ActionHook hook) {
         this.hook = hook;
+    }
+
+    public final Object getNode(int pos) {
+        return notes[pos];
     }
 }

@@ -19,7 +19,7 @@ public interface Processor {
      * @param socketWrapper 封装的NioChannel对象
      * @param status        触发的连接事件
      */
-    SocketState process(SocketWrapperBase<? extends NioChannel> socketWrapper, SocketEvent status) throws IOException;
+    SocketState process(SocketWrapperBase<?> socketWrapper, SocketEvent status) throws IOException;
 
 
 

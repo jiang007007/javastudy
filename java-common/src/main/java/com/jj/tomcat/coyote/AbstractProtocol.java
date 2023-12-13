@@ -48,6 +48,10 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler {
             this.proto = proto;
         }
 
+        protected AbstractProtocol<S> getProtocol() {
+            return proto;
+        }
+
         /**
          * 根据状态 处理连接
          *
@@ -58,7 +62,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler {
         @Override
         public SocketState process(SocketWrapperBase<S> wrapper, SocketEvent states) {
             if (wrapper == null) {
-                return SocketState.CLOSE;
+                return SocketState.CLOSED;
             }
             //通过NioSocketWrapper包装类获取NioChannel
             S socket = wrapper.getSocket();
@@ -68,9 +72,24 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler {
                 //移除等待队列中的Process
             } else if (states == SocketEvent.DISCONNECT || states == SocketEvent.ERROR) {
                 //客户端断开连接,程序处理错误
-                return SocketState.CLOSE;
+                return SocketState.CLOSED;
             }
-            return null;
+            try {
+                if (processor == null) {
+                    //创建http请求的处理器
+                    processor = getProtocol().createProcessor();
+                }
+                connections.put(socket,processor);
+                SocketState state;
+                do{
+                    state = processor.process(wrapper,states);
+                }while (state ==SocketState.UPGRADING);
+
+
+            }catch (Exception e){
+
+            }
+            return SocketState.CLOSED;
         }
 
         @Override

@@ -16,8 +16,8 @@ import java.util.Iterator;
 public abstract class AbstractProcessorLight implements Processor {
 
     @Override
-    public SocketState process(SocketWrapperBase<? extends NioChannel> socketWrapper, SocketEvent status) throws IOException {
-        SocketState state = SocketState.CLOSE;//状态机的实现
+    public SocketState process(SocketWrapperBase<?> socketWrapper, SocketEvent status) throws IOException {
+        SocketState state = SocketState.CLOSED;//状态机的实现
         Iterator<DispatchType> dispatches = null;
         do {
             if (dispatches != null) {
@@ -30,7 +30,7 @@ public abstract class AbstractProcessorLight implements Processor {
             }
 
         } while (state == SocketState.ASYNC_END ||
-                state != null && state != SocketState.CLOSE);
+                state != null && state != SocketState.CLOSED);
         return state;
     }
 
