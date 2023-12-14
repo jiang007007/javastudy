@@ -46,4 +46,26 @@ public class Connector extends LifecycleBase {
         coyoteAdapter = new CoyoteAdapter(this);
         protocolHandler.setAdapter(coyoteAdapter);
     }
+
+    /**
+     * @return 一个新的servlet 请求对象
+     */
+    public Request createRequest() {
+        Request request = new Request();
+        request.setConnector(this);
+        return request;
+    }
+
+    /**
+     * @return 一个新的servlet 响应对象
+     */
+    public Response createResponse() {
+        Response response = new Response();
+        response.setConnector(this);
+        return response;
+    }
+
+    public String getProtocol() {
+        return "HTTP/1.1";
+    }
 }

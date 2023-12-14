@@ -22,4 +22,8 @@ public final class Response {
     public final Object getNode(int pos) {
         return notes[pos];
     }
+
+    public final void setNote(int i, Object value) {
+        notes[i] = value;
+    }
 }

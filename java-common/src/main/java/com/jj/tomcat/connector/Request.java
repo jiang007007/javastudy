@@ -3,6 +3,7 @@ package com.jj.tomcat.connector;
 import com.jj.tomcat.connector.http.HttpServletMapping;
 import com.jj.tomcat.connector.http.HttpServletRequest;
 import com.jj.tomcat.connector.http.PushBuilder;
+import com.jj.tomcat.util.FastHttpDateFormat;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -10,12 +11,53 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Coyote request的包装对象
+ * 就是一个servletRequest
+ */
 public class Request implements HttpServletRequest {
+
+
+    private Connector connector;
+
+    /**
+     * Coyote request.
+     */
+    protected com.jj.tomcat.coyote.body.Request coyoteRequest;
+    protected Response response = null;
+
+    @Deprecated
+    protected final SimpleDateFormat formats[];
+
+    @Deprecated
+    private static final SimpleDateFormat formatsTemplate[] = {
+            new SimpleDateFormat(FastHttpDateFormat.RFC1123_DATE, Locale.US),
+            new SimpleDateFormat("EEEEEE, dd-MMM-yy HH:mm:ss zzz", Locale.US),
+            new SimpleDateFormat("EEE MMMM d HH:mm:ss yyyy", Locale.US)
+    };
+
+    public Request() {
+        formats = new SimpleDateFormat[formatsTemplate.length];
+        for (int i = 0; i < formats.length; i++) {
+            formats[i] = (SimpleDateFormat) formatsTemplate[i].clone();
+        }
+    }
+
+    public void setConnector(Connector connector) {
+        this.connector = connector;
+    }
+
+
+    public void setCoyoteRequest(com.jj.tomcat.coyote.body.Request req) {
+        this.coyoteRequest = req;
+    }
+
     @Override
     public HttpServletMapping getHttpServletMapping() {
         return null;
@@ -369,5 +411,9 @@ public class Request implements HttpServletRequest {
     @Override
     public DispatcherType getDispatcherType() {
         return null;
+    }
+
+    public void setResponse(Response response) {
+        this.response = response;
     }
 }

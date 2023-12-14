@@ -17,6 +17,7 @@ public final class Request {
 
     private final RequestInfo reqProcessorMX = new RequestInfo(this);
 
+    //servlet的请求
     private final Object notes[] = new Object[32];
 
     public void setResponse(Response response) {
@@ -34,6 +35,10 @@ public final class Request {
 
     public final Object getNote(int pos) {
         return notes[pos];
+    }
+
+    public final void setNote(int pos, Object value) {
+        notes[pos] = value;
     }
 
     public void action(ActionCode actionCode, Object param) {

@@ -11,6 +11,9 @@ import com.jj.tomcat.util.net.channel.SocketWrapperBase;
 
 import java.io.IOException;
 
+/**
+ * 请求处理器
+ */
 public class Http11Processor extends AbstractProcessor {
 
     private final AbstractHttp11Protocol<?> protocol;
@@ -27,6 +30,12 @@ public class Http11Processor extends AbstractProcessor {
 
         //
         setSocketWrapper(socketWrapper);
+        try {
+            //调用CoyoteAdapter service方法 进行请求体的解析  pipeline回调  结果刷新出去
+            getAdapter().service(request, response);
+        } catch (Throwable e) {
+
+        }
         return null;
     }
 
