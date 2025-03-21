@@ -5,6 +5,7 @@
 
     <modules>
         <module>java-common</module>
+        <module>java-netty</module>
     </modules>
 
     <parent>

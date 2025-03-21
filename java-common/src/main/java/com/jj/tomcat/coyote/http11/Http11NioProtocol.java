@@ -1,6 +1,5 @@
 package com.jj.tomcat.coyote.http11;
 
-import com.jj.tomcat.coyote.AbstractProtocol;
 import com.jj.tomcat.util.net.NioEndpoint;
 import com.jj.tomcat.util.net.channel.NioChannel;
 
