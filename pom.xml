@@ -6,6 +6,7 @@
     <modules>
         <module>java-common</module>
         <module>java-netty</module>
+        <module>rpc-core</module>
     </modules>
 
     <parent>
