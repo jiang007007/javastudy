@@ -1,4 +1,4 @@
-package com.rpc.core.invoker.register.entity;
+package com.rpc.core.register.entity;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -11,7 +11,7 @@ import java.util.Objects;
  *  端口
  *  扩展信息
  */
-public class RegisterInstance implements Serializable, Comparable {
+public class RegisterInstance implements Serializable, Comparable<Object> {
 
     private String env;
 

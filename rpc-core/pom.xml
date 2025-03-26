@@ -25,5 +25,17 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
+        <!-- fastjson2 -->
+        <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+            <version>${fastjson2.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.caucho</groupId>
+            <artifactId>hessian</artifactId>
+            <version>${hession.version}</version>
+        </dependency>
     </dependencies>
 </project>

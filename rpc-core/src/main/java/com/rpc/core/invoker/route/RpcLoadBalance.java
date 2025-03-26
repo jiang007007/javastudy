@@ -1,6 +1,6 @@
 package com.rpc.core.invoker.route;
 
-import com.rpc.core.invoker.register.entity.RegisterInstance;
+import com.rpc.core.register.entity.RegisterInstance;
 
 import java.util.TreeSet;
 
