@@ -3,7 +3,7 @@ package com.rpc.core.boot;
 import com.rpc.core.provider.ProviderConfig;
 import com.rpc.core.register.Register;
 
-public class Bootstrap {
+public class RPCBootstrap {
 
     private BaseConfig baseConfig;
 

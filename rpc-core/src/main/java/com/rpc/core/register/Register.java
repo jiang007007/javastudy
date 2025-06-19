@@ -1,11 +1,10 @@
 package com.rpc.core.register;
 
-import com.rpc.core.boot.Bootstrap;
+import com.rpc.core.boot.RPCBootstrap;
 import com.rpc.core.register.entity.RegisterInstance;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -16,7 +15,7 @@ public interface Register {
      * 1. 服务注册线程   循环线程 维护注册数据在线状态
      * 2. 服务发现线程   long-polling 结合轮询
      */
-    void start(Bootstrap bootstrap);
+    void start(RPCBootstrap RPCBootstrap);
 
     void stop();
 

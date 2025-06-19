@@ -1,5 +1,7 @@
 package com.rpc.core.remoting;
 
+import com.rpc.core.boot.RPCBootstrap;
+
 import java.util.concurrent.Callable;
 
 public abstract class Server {
@@ -7,6 +9,8 @@ public abstract class Server {
     private Callable<Void> startedCallback;
 
     private Callable<Void> stopedCallback;
+    public abstract void start(RPCBootstrap RPCBootstrap)throws Exception;
+
 
 
     public void onStarted() {

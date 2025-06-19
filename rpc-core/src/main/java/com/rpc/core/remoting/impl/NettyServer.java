@@ -1,5 +1,6 @@
 package com.rpc.core.remoting.impl;
 
+import com.rpc.core.boot.RPCBootstrap;
 import com.rpc.core.remoting.Server;
 
 /**
@@ -7,4 +8,9 @@ import com.rpc.core.remoting.Server;
  */
 public class NettyServer extends Server {
     private Thread thread;
+
+    @Override
+    public void start(RPCBootstrap RPCBootstrap) throws Exception {
+
+    }
 }
